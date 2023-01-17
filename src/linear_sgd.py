@@ -5,6 +5,7 @@ import numpy as np
 
 # Constants
 N_ITERS = 1500
+LR = 0.01
 N_POINTS = 100
 SLOPE = 0.25  # True slope of line of best fit to noisy data
 INTERCEPT = 1  # True intercept of line of best fit to noisy data
@@ -74,7 +75,7 @@ if __name__ == "__main__":
     model = LinearRegression()
     x, y = get_noisy_data(N_POINTS, random.Random(), SLOPE, INTERCEPT)
     plt.scatter(x, y)
-    model.fit(x, y, n_iters=N_ITERS)
+    model.fit(x, y, n_iters=N_ITERS, learning_rate=LR)
     y_pred = model.predict(x)
 
     plt.scatter(x, y_pred)
