@@ -1,16 +1,22 @@
-import math
 import random
 
 import matplotlib.pyplot as plt
 import numpy as np
 
+# Constants
+N_POINTS = 100
+SPLIT = 0.75  # 0 / 1 label split point
+SEED = 42
+random.seed(SEED)
+np.random.seed(SEED)
+
 
 class LogisticRegression:
-    def __init__(self, rand_generator):
+    def __init__(self):
         self.x = None
         self.y = None
         self.preds = None
-        self.rg = rand_generator
+        self.rg = random.Random()
 
     def _rand(self, i):
         return self.rg.random()
@@ -58,16 +64,10 @@ class LogisticRegression:
 
 
 if __name__ == "__main__":
-    rand_generator = random.Random()
-    model = LogisticRegression(rand_generator)
-
-    n_points = 100
-
-    x = [n / n_points for n in range(n_points)]
-    split = 0.75
-    y = [0] * int(math.floor(split * len(x))) + [1] * int(
-        math.floor(len(x) - (split * len(x)))
-    )
+    model = LogisticRegression()
+    x = [n / N_POINTS for n in range(N_POINTS)]
+    y = np.zeros_like(x)
+    y[: int(len(y) * SPLIT)] = 1
     plt.scatter(x, y)
     model.fit(np.array(x), np.array(y), n_iters=200000, learning_rate=0.1)
     y_pred = model.predict(x)
