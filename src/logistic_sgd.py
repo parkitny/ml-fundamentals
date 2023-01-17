@@ -4,8 +4,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Constants
+N_ITERS = 10000
+LR = 0.1
 N_POINTS = 100
-SPLIT = 0.75  # 0 / 1 label split point
+SPLIT = 0.65  # 1 / 0 label split point
 SEED = 42
 random.seed(SEED)
 np.random.seed(SEED)
@@ -63,14 +65,19 @@ class LogisticRegression:
         return self.sigmoid(z)
 
 
+def get_data(n_points, split):
+    x = np.array([n / n_points for n in range(n_points)])
+    y = np.zeros_like(x)
+    y[: int(len(y) * split)] = 1
+    return x, y
+
+
 if __name__ == "__main__":
     model = LogisticRegression()
-    x = [n / N_POINTS for n in range(N_POINTS)]
-    y = np.zeros_like(x)
-    y[: int(len(y) * SPLIT)] = 1
+    x, y = get_data(N_POINTS, SPLIT)
     plt.scatter(x, y)
-    model.fit(np.array(x), np.array(y), n_iters=200000, learning_rate=0.1)
+    model.fit(x, y, n_iters=N_ITERS, learning_rate=LR)
     y_pred = model.predict(x)
 
-    plt.scatter(list(x), list(y_pred))
+    plt.scatter(x, y_pred)
     plt.show()

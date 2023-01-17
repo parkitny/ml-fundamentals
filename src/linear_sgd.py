@@ -3,13 +3,22 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 
+# Constants
+N_ITERS = 1500
+N_POINTS = 100
+SLOPE = 0.25  # True slope of line of best fit to noisy data
+INTERCEPT = 1  # True intercept of line of best fit to noisy data
+SEED = 42
+random.seed(SEED)
+np.random.seed(SEED)
+
 
 class LinearRegression:
-    def __init__(self, rand_generator):
+    def __init__(self):
         self.x = None
         self.y = None
         self.preds = None
-        self.rg = rand_generator
+        self.rg = random.Random()
 
     def _rand(self, i):
         return self.rg.random()
@@ -51,22 +60,22 @@ class LinearRegression:
         return self.W * x + self.b
 
 
-if __name__ == "__main__":
-    rand_generator = random.Random()
-    model = LinearRegression(rand_generator)
-    n_points = 100
-    actual_slope = 0.25
-    actual_intercept = 1
+def noise(rg, scale=0.15):
+    return scale * (2 * rg.random() - 1)
+
+
+def get_noisy_data(n_points, rg, actual_slope, actual_intercept):
     x = [n / n_points for n in range(n_points)]
-    scale = 0.15
-    y = [
-        actual_intercept
-        + actual_slope * (_x + scale * (2 * rand_generator.random() - 1))
-        for _x in x
-    ]
+    y = [actual_intercept + actual_slope * (_x + noise(rg)) for _x in x]
+    return np.array(x), np.array(y)
+
+
+if __name__ == "__main__":
+    model = LinearRegression()
+    x, y = get_noisy_data(N_POINTS, random.Random(), SLOPE, INTERCEPT)
     plt.scatter(x, y)
-    model.fit(np.array(x), np.array(y), n_iters=1500)
+    model.fit(x, y, n_iters=N_ITERS)
     y_pred = model.predict(x)
 
-    plt.scatter(list(x), list(y_pred))
+    plt.scatter(x, y_pred)
     plt.show()
